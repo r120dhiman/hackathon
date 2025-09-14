@@ -33,21 +33,13 @@ const userId="68c4f8b56da2a2d491814336";;
     const errorRate = totalQueries > 0 ? failedQueries / totalQueries : 0;
 
     // Store metric with userId
-    await Query.create({
-      userId: userId,
-      latency_ms: latencyMs,
-      cpu: cpu * 100,
-      memory: memory,
-      error_rate: errorRate,
-      timestamp: new Date()
-    });
-
+    
     // Fetch last 50 metrics for this user
     const history = await Query.find({ userId: userId })
-      .sort({ timestamp: -1 })
-      .limit(50)
-      .lean();
-
+    .sort({ timestamp: -1 })
+    .limit(50)
+    .lean();
+    
     // Current metric object
     const currentMetrics = {
       latency_ms: latencyMs,
@@ -55,9 +47,20 @@ const userId="68c4f8b56da2a2d491814336";;
       memory: memory,
       error_rate: errorRate,
     };
-
+    
     // Run anomaly detection
     const anomalies = anomalyDetection(currentMetrics, history);
+    await Query.create({
+      userId: userId,
+      latency_ms: latencyMs,
+      cpu: cpu * 100,
+      memory: memory,
+      error_rate: errorRate,
+      collection: req.body.collection,
+      pipeline: req.body.pipeline,
+      result:anomalies,
+      timestamp: new Date()
+    });
 
     res.json({
       timestamp: new Date().toISOString(),

@@ -7,6 +7,9 @@ const QuerySchema = new mongoose.Schema({
   cpu: Number,
   memory: Number,
   error_rate: Number,
+  collection: String,
+  pipeline: { type: mongoose.Schema.Types.Mixed },
+  result: { type: mongoose.Schema.Types.Mixed },
   timestamp: { type: Date, default: Date.now },
 });
 

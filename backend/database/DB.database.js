@@ -1,15 +1,24 @@
 const mongoose = require('mongoose');
 
-const DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost:27017/hackthon';
-
-const connectDB = async () => {
+const connectDB = async (mongo_url) => {
   try {
-    await mongoose.connect(DATABASE_URL);
-    console.log('MongoDB connected successfully');
+    await mongoose.connect(mongo_url);
+    console.log('MongoDB main/global connection established successfully');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
+    console.error('MongoDB main/global connection error:', error);
+    throw error;
   }
 };
 
-module.exports = connectDB;
+const createConnection = async (mongo_url) => {
+  try {
+    const connection = mongoose.createConnection(mongo_url);
+    console.log('New MongoDB external connection created successfully');
+    return connection;
+  } catch (error) {
+    console.error('Error creating new MongoDB external connection:', error);
+    throw error;
+  }
+};
+
+module.exports = { connectDB, createConnection };

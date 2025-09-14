@@ -7,12 +7,15 @@ const UserSchema = new mongoose.Schema({
   age: Number,
   email: String,
   password: String,
+  salt: String,
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.pre("save", function(next) {
     const user = this;
-    
-    // Skip hashing if password isn't modified or is empty
     if (!user.isModified("password") || !user.password) {
         return next();
     }
