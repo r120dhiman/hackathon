@@ -1,7 +1,8 @@
 const User=require("../model/user.model");
-const {randomBytes} = require("crypto");
+const {randomBytes,createHmac} = require("crypto");
 const {createConnection} = require("../database/DB.database");
 const bcrypt = require('bcrypt');
+const {createToken} = require("../middlewares/jwt.middleware");
 
 const allUsers= async (req,res)=>{
     const users=await User.find();
@@ -48,8 +49,15 @@ const login=async (req, res)=>{
     if(!user){
         return res.status(400).json({message:"User not found"});
     }
-    const isPasswordCorrect=await bcrypt.compare(password, user.password);
-    res.status(200).json({message:"Login successful", user});
+    const isPasswordCorrect=createHmac('sha256', user.salt)
+    .update(password)
+    .digest('hex');
+    if(isPasswordCorrect!==user.password){
+        return res.status(400).json({message:"Invalid password"});
+    }
+    const { password: pwd, salt, ...safeUser } = user.toObject ? user.toObject() : user;
+    const token=createToken(safeUser);
+    res.status(200).json({message:"Login successful", user: safeUser, token});
 }
 
 const dbconnection=async (req, res)=>{

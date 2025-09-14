@@ -4,7 +4,7 @@ const QueryExecution = require('../model/queryExecution.model');
 // Create a new database connection
 const createConnection = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const { connectionName, databaseType, connectionString, host, port, databaseName, username } = req.body;
 
     if (!connectionName || !databaseType || !connectionString) {
@@ -40,7 +40,7 @@ const createConnection = async (req, res) => {
 // Get user's database connections
 const getUserConnections = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const connections = await connectionManager.getUserConnections(userId);
     
     res.status(200).json({
@@ -58,7 +58,8 @@ const getUserConnections = async (req, res) => {
 // Execute query on user's database
 const executeQuery = async (req, res) => {
   try {
-    const { userId, connectionId } = req.params;
+      const { id: userId } = req.user;
+    const { connectionId } = req.params;
     const { query, queryType, collection, database } = req.body;
     console.log("REQ BODY:", req.body);
     let parsedQuery = query;
@@ -110,7 +111,8 @@ const executeQuery = async (req, res) => {
 // Get connection statistics and monitoring data
 const getConnectionStats = async (req, res) => {
   try {
-    const { userId, connectionId } = req.params;
+    const { id: userId } = req.user;
+    const { connectionId } = req.params;
     const stats = await connectionManager.getConnectionStats(userId, connectionId);
     
     res.status(200).json({
@@ -128,7 +130,8 @@ const getConnectionStats = async (req, res) => {
 // Close database connection
 const closeConnection = async (req, res) => {
   try {
-    const { userId, connectionId } = req.params;
+    const { id: userId } = req.user;
+    const { connectionId } = req.params;
     const result = await connectionManager.closeConnection(userId, connectionId);
     
     res.status(200).json({
@@ -146,7 +149,8 @@ const closeConnection = async (req, res) => {
 // Get query execution history
 const getQueryHistory = async (req, res) => {
   try {
-    const { userId, connectionId } = req.params;
+    const { id: userId } = req.user;
+    const { connectionId } = req.params;
     const { page = 1, limit = 10, queryType, status } = req.query;
 
     const filter = { userId };
@@ -187,7 +191,7 @@ const getQueryHistory = async (req, res) => {
 // Get database analytics
 const getDatabaseAnalytics = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const { days = 7 } = req.query;
 
     const startDate = new Date();

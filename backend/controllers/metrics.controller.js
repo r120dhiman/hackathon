@@ -9,7 +9,7 @@ const getMetrics = async (req, res) => {
   totalQueries++;
   // Assume authentication middleware sets req.user.id
 //   const userId = req.user && req.user.id;
-const userId="68c4f8b56da2a2d491814336";;
+const userId=req.user.id;
   if (!userId) {
     return res.status(401).json({ error: "Unauthorized" });
   }

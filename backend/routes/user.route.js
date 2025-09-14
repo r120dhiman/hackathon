@@ -4,7 +4,7 @@ const userRouter= Router();
 
 
 userRouter.get("/users", allUsers);
-userRouter.post("/user", newUser);
+userRouter.post("/signup", newUser);
 userRouter.put("/user/:id", updateUser);
 userRouter.put("/user/resetpassword/:id", resetpassword);
 userRouter.delete("/user/:id", deleteUser);
